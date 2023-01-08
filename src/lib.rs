@@ -3,15 +3,15 @@ use itertools::Itertools;
 
 #[derive(Debug)]
 pub struct StatisticalInfo<T> {
-    pub mo: Vec<T>,
-    pub me: f64,
-    pub xavg: f64,
-    pub xmin: T,
-    pub xmax: T,
-    pub q1: f64,
-    pub q3: f64,
-    pub r: T,
-    pub qr: f64,
+    pub mo: Vec<T>, // trends
+    pub me: f64, // median
+    pub xavg: f64, // average
+    pub xmin: T, // minimum value
+    pub xmax: T, // maximum value
+    pub q1: f64, // first quartille
+    pub q3: f64, // second quartille
+    pub r: T, // scope
+    pub qr: f64, // quartille scope
 }
 
 impl<'a, T> StatisticalInfo<T>
@@ -43,18 +43,6 @@ where
             qr: q3 - q1,
         }
     }
-
-    // nums.iter()
-    //         .fold(HashMap::<i32, usize>::new(), |mut m, x| {
-    //             *m.entry(*x).or_default() += 1;
-    //             m
-    //         })
-    //         .iter()
-    //         .max_set_by_key(|(_, v)| *v)
-    //         .iter()
-    //         .map(|(k, _)| **k)
-    //         .sorted()
-    //         .collect()
 
     fn get_most_frequent_number(nums: &[T]) -> Vec<T> {
         // credit to Nikola Peshev 2023 ©® Mafs™
@@ -105,8 +93,6 @@ where
         let ceiled_half = (nums.len() as f64 / 2.0).ceil() as usize;
         Self::get_median(&nums[ceiled_half..nums.len()])
     }
-
-
 }
 
 #[cfg(test)]
