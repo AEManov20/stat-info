@@ -18,15 +18,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "stat-info"
+name = "stat_info"
 version = "0.1.0"
 dependencies = [
  "itertools",
-]
-
-[[package]]
-name = "stat-test"
-version = "0.1.0"
-dependencies = [
- "stat-info",
 ]
