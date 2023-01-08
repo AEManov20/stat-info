@@ -5,9 +5,10 @@ use itertools::Itertools;
 pub struct StatisticalInfo<T> {
     pub mo: Vec<T>, // trends
     pub me: f64, // median
-    pub xavg: f64, // average
     pub xmin: T, // minimum value
     pub xmax: T, // maximum value
+    pub xsum: T, // sum
+    pub xavg: f64, // average
     pub q1: f64, // first quartille
     pub q3: f64, // second quartille
     pub r: T, // scope
@@ -21,6 +22,7 @@ where
         + Copy
         + Ord
         + Eq
+        + Default
         + std::hash::Hash
         + std::iter::Sum<&'a T>
         + std::ops::Add<T, Output = T>
@@ -32,10 +34,12 @@ where
         nums.sort();
         let (min, max) = (Self::get_min(&nums), Self::get_max(&nums));
         let (q1, q3) = (Self::calc_first_quartille(&nums), Self::calc_third_quartille(&nums));
+        let xsum = Self::calc_sum(&nums);
 
         Self {
             mo: Self::get_most_frequent_number(&nums),
-            xavg: Self::calc_average(&nums),
+            xavg: Self::calc_average(&xsum, nums.len()),
+            xsum,
             me: Self::get_median(&nums),
             xmin: min, xmax: max,
             q1, q3,
@@ -59,10 +63,14 @@ where
             .collect()
     }
 
-    fn calc_average(nums: &[T]) -> f64 {
-        // impossible to use sum due to:
+    fn calc_sum(nums: &[T]) -> T {
+        // impossible to use .sum due to:
         // https://stackoverflow.com/questions/29459738/how-to-define-sum-over-vectors-or-iterators-in-a-generic-way
-        nums.iter().fold(0.0, |acc, &item| item.into() + acc) / nums.len() as f64
+        nums.iter().fold(T::default(), |acc, &item| item + acc)
+    }
+
+    fn calc_average(sum: &T, len: usize) -> f64 {
+        Into::<f64>::into(*sum) / len as f64
     }
 
     fn get_median(nums: &[T]) -> f64 {
@@ -107,6 +115,7 @@ mod tests {
         
         assert_eq!(stat_info.mo, vec![5]);
         assert_eq!(stat_info.xavg, 4.142857142857143);
+        assert_eq!(stat_info.xsum, 58);
         assert_eq!(stat_info.me, 4.5);
         assert_eq!(stat_info.xmin, 1);
         assert_eq!(stat_info.xmax, 7);
